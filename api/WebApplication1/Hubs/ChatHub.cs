@@ -44,12 +44,15 @@ namespace WebApplication1.Hubs
             if (session.Messages.Any())
             {
                 await SendMessageToConnection(Context.ConnectionId, 
-                    $"--- Restored {session.Messages.Count} previous messages ---");
+                    $"--- Restoring session with {session.Messages.Count} previous messages ---");
                 
-                foreach (var msg in session.Messages.TakeLast(10)) // Send last 10 messages
+                foreach (var msg in session.Messages) // Send all previous messages
                 {
                     await SendMessageToConnection(Context.ConnectionId, msg);
                 }
+                
+                await SendMessageToConnection(Context.ConnectionId, 
+                    "--- End of restored messages ---");
             }
             else
             {
