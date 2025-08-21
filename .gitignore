@@ -19,6 +19,13 @@ Thumbs.db
 *.sln.docstates
 *.sublime-*
 
+# Build products
+dist/
+build/
+.angular/
+bin/
+obj/
+
 # Logs
 *.log
 npm-debug.log*
