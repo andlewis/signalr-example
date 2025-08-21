@@ -1,0 +1,98 @@
+
+<div class="app-container">
+  <h1>{{ title() }}</h1>
+  
+  <!-- Connection Status and ID -->
+  <div class="connection-info-bar">
+    <div class="connection-details">
+      <span class="status-label">Status:</span>
+      <span class="status-value" [class]="'status-' + connectionStatus().toLowerCase().replace(' ', '-')">
+        {{ connectionStatus() }}
+      </span>
+      <span class="separator">|</span>
+      <span class="id-label">Connection:</span>
+      <span class="connection-id" [class.connected]="connectionId()">
+        {{ connectionId() || 'Not connected' }}
+      </span>
+      @if (userSessionId()) {
+        <span class="separator">|</span>
+        <span class="id-label">Session:</span>
+        <span class="session-id" [class.active]="userSessionId()">
+          {{ userSessionId() }}
+        </span>
+      }
+    </div>
+    <div class="connection-actions">
+      <button 
+        type="button"
+        class="copy-url-button"
+        (click)="copyUrlToClipboard()"
+        [disabled]="!userSessionId()"
+        title="Copy shareable URL with session ID">
+        Copy URL
+      </button>
+      <button 
+        type="button"
+        class="refresh-id-button"
+        (click)="refreshConnectionId()"
+        [disabled]="connectionStatus() !== 'Connected'">
+        Refresh ID
+      </button>
+      <button 
+        type="button"
+        class="reconnect-button"
+        (click)="reconnect()"
+        [disabled]="connectionStatus() === 'Connected'">
+        Reconnect
+      </button>
+    </div>
+  </div>
+  
+  <div class="chat-container">
+    <!-- Response display area -->
+    <div class="responses-section">
+      <div class="responses-header">
+        <label for="responses">Messages:</label>
+        <button 
+          type="button"
+          class="clear-button"
+          (click)="clearMessages()">
+          Clear
+        </button>
+      </div>
+      <textarea 
+        id="responses"
+        class="responses-textarea"
+        [value]="formattedMessages()"
+        readonly
+        placeholder="Messages will appear here when you connect to SignalR...">
+      </textarea>
+    </div>
+
+    <!-- Prompt input section -->
+    <div class="prompt-section">
+      <label for="prompt">Enter your message:</label>
+      <div class="input-group">
+        <input 
+          type="text"
+          id="prompt"
+          class="prompt-input"
+          [value]="prompt()"
+          (input)="onPromptChange($event)"
+          (keyup.enter)="onSubmit()"
+          placeholder="Type your message here..."
+          [disabled]="connectionStatus() !== 'Connected'"
+        />
+        <button 
+          type="button"
+          class="submit-button"
+          (click)="onSubmit()"
+          [disabled]="!prompt().trim() || connectionStatus() !== 'Connected'">
+          Send
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<router-outlet />
